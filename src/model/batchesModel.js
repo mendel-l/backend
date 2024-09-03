@@ -1,5 +1,6 @@
 'use strict';
 const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../../database.js'); 
 
 module.exports = (sequelize) => {
   class batch extends Model {

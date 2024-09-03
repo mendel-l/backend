@@ -1,14 +1,15 @@
 'use strict';
 const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../../database.js'); 
 
 module.exports = (sequelize) => {
-  class category extends Model {
+  class role extends Model {
     static associate(models) {
       // Define associations here if necessary
     }
   };
-  category.init({
-    categoria_id: {
+  role.init({
+    role_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       autoIncrement: true,
@@ -29,9 +30,9 @@ module.exports = (sequelize) => {
     }
   }, {
     sequelize,
-    modelName: 'category',
-    tableName: 'categories',
+    modelName: 'role',
+    tableName: 'roles',
     timestamps: false
   });
-  return category;
+  return role;
 };

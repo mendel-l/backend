@@ -1,39 +1,27 @@
 'use strict';
 const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../../database.js'); 
 
 module.exports = (sequelize) => {
-  class supplier extends Model {
+  class category extends Model {
     static associate(models) {
       // Define associations here if necessary
     }
   };
-  supplier.init({
-    supplier_id: {
+  category.init({
+    categoria_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       autoIncrement: true,
       primaryKey: true
     },
     nombre: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(100),
       allowNull: false
     },
-    direccion: {
+    descripcion: {
       type: DataTypes.TEXT,
       allowNull: true
-    },
-    telefono: {
-      type: DataTypes.STRING(20),
-      allowNull: true
-    },
-    email: {
-      type: DataTypes.STRING(255),
-      allowNull: true
-    },
-    fecha_creacion: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     },
     state: {
       type: DataTypes.BOOLEAN,
@@ -42,9 +30,9 @@ module.exports = (sequelize) => {
     }
   }, {
     sequelize,
-    modelName: 'supplier',
-    tableName: 'suppliers',
+    modelName: 'category',
+    tableName: 'categories',
     timestamps: false
   });
-  return supplier;
+  return category;
 };
