@@ -2,13 +2,12 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../../database.js'); 
 
-module.exports = (sequelize) => {
-  class supplier extends Model {
+
+  class Supplier extends Model {
     static associate(models) {
-      // Define associations here if necessary
     }
   };
-  supplier.init({
+  Supplier.init({
     supplier_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -47,5 +46,6 @@ module.exports = (sequelize) => {
     tableName: 'suppliers',
     timestamps: false
   });
-  return supplier;
-};
+  
+module.exports= Supplier;
+

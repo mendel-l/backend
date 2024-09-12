@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const ClientController = require('../controller/clientController'); // Asegúrate de que la ruta sea correcta
+const ClientController = require('../controller/clientController'); 
 
 
 router.post('/clients', ClientController.createClient);

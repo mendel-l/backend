@@ -2,12 +2,12 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../../database.js'); 
 
-module.exports = (sequelize) => {
+
   class batch extends Model {
     static associate(models) {
       // Define associations here if necessary
     }
-  };
+  }
   batch.init({
     batch_id: {
       type: DataTypes.INTEGER,
@@ -43,5 +43,6 @@ module.exports = (sequelize) => {
     tableName: 'batches',
     timestamps: false
   });
-  return batch;
-};
+
+
+module.exports=batch;

@@ -62,6 +62,31 @@ class ClientController {
       res.status(400).json({ error: error.message });
     }
   }
+
+  async changeStatusClient(req, res) {
+    try {
+      const { id } = req.params;
+      const client = await Client.findOne({
+        where: { client_id: id }
+      });
+  
+      if (!product) {
+        return res.status(404).json({ error: 'Cliente no encontrado' });
+      }
+      const newState = !client.state;
+      const [updated] = await Client.update(
+        { state: newState },
+        { where: { client_id: id } }
+      );id
+      if (updated) {
+        res.status(200).json({ message: 'Estado cambiado', newState });
+      } else {
+        res.status(404).json({ error: 'Cliente no encontrado' });
+      }
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
 }
 
 module.exports = new ClientController();
