@@ -1,49 +1,37 @@
 'use strict';
 const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../../database.js'); 
 
 module.exports = (sequelize) => {
-  class client extends Model {
+  class supplier extends Model {
     static associate(models) {
       // Define associations here if necessary
     }
   };
-  client.init({
-    client_id: {
+  supplier.init({
+    supplier_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       autoIncrement: true,
       primaryKey: true
     },
     nombre: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    apellido: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    email: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-      unique: true
-    },
-    contraseña: {
       type: DataTypes.STRING(255),
       allowNull: false
-    },
-    telefono: {
-      type: DataTypes.STRING(20),
-      allowNull: true
     },
     direccion: {
       type: DataTypes.TEXT,
       allowNull: true
     },
-    tipo_usuario: {
-      type: DataTypes.ENUM('cliente', 'administrador'),
-      allowNull: false
+    telefono: {
+      type: DataTypes.STRING(20),
+      allowNull: true
     },
-    fecha_registro: {
+    email: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    fecha_creacion: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
@@ -55,9 +43,9 @@ module.exports = (sequelize) => {
     }
   }, {
     sequelize,
-    modelName: 'client',
-    tableName: 'clients',
+    modelName: 'supplier',
+    tableName: 'suppliers',
     timestamps: false
   });
-  return client;
+  return supplier;
 };

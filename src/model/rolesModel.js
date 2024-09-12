@@ -1,35 +1,27 @@
 'use strict';
 const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../../database.js'); 
 
 module.exports = (sequelize) => {
-  class batch extends Model {
+  class role extends Model {
     static associate(models) {
       // Define associations here if necessary
     }
   };
-  batch.init({
-    batch_id: {
+  role.init({
+    role_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       autoIncrement: true,
       primaryKey: true
     },
-    quantity: {
-      type: DataTypes.INTEGER,
+    nombre: {
+      type: DataTypes.STRING(100),
       allowNull: false
     },
-    expiration_date: {
-      type: DataTypes.DATE,
-      allowNull: false
-    },
-    fecha_notificacion: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-    },
-    manufacturin_date: {
-      type: DataTypes.DATE,
-      allowNull: false
+    descripcion: {
+      type: DataTypes.TEXT,
+      allowNull: true
     },
     state: {
       type: DataTypes.BOOLEAN,
@@ -38,9 +30,9 @@ module.exports = (sequelize) => {
     }
   }, {
     sequelize,
-    modelName: 'batch',
-    tableName: 'batches',
+    modelName: 'role',
+    tableName: 'roles',
     timestamps: false
   });
-  return batch;
+  return role;
 };
