@@ -10,13 +10,15 @@ app.use(bodyParser.json());
 const clientRoute = require('./routes/clientRoutes.js');
 const supplierRoute = require('./routes/supplierRoutes.js');
 const productsPerishableRoutes = require('./routes/productsPerishabRoutes.js');
+const batchRoute = require('./routes/batchRoutes.js');
 //
 
 app.use('/api/', clientRoute);
 app.use('/api/', supplierRoute);
 app.use('/api/', productsPerishableRoutes);
+app.use('/api/', batchRoute);
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`El servidor se está ejecutando en http://localhost:${port}`);
 });
