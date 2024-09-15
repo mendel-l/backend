@@ -12,11 +12,12 @@ const clientRoute = require('./routes/clientRoutes.js');
 const supplierRoute = require('./routes/supplierRoutes.js');
 const categoryRoute = require('./routes/categoryRoutes.js');
 const batchRoute = require('./routes/batchRoutes.js');
-/*const userRoute = require('./routes/batchRoutes.js');*/
+const roleRoute = require('./routes/rolesRoutes.js');
 
 /* RUTAS SECUNDARIAS */
 const productsPerishableRoutes = require('./routes/productsPerishabRoutes.js');
 const productsNonPerishableRoutes = require('./routes/productsNonPerishablesRoutes.js');
+const userRoute = require('./routes/usersRoutes');
 
 /* RUTAS FINALES */
 
@@ -27,11 +28,12 @@ app.use('/api/', clientRoute);
 app.use('/api/', supplierRoute);
 app.use('/api/', categoryRoute);
 app.use('/api/', batchRoute);
-/*app.use('/api/', userRoute);*/
+app.use('/api/', roleRoute);
 
 /* RUTAS SECUNDARIAS */
 app.use('/api/', productsPerishableRoutes);
 app.use('/api/', productsNonPerishableRoutes);
+app.use('/api/', userRoute);
 
 /* RUTAS FINALES */
 
