@@ -22,12 +22,12 @@ Batch.init({
     type: DataTypes.DATE,
     allowNull: false
   },
-  fecha_notificacion: {
+  notification_date: {
     type: DataTypes.DATE,
     allowNull: true,
     defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
   },
-  manufacturin_date: {
+  manufacturing_date: {
     type: DataTypes.DATE,
     allowNull: false
   },

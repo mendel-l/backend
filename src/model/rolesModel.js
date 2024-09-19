@@ -10,11 +10,11 @@ Role.init({
     autoIncrement: true,
     primaryKey: true
   },
-  nombre: {
+  name: {
     type: DataTypes.STRING(100),
     allowNull: false
   },
-  descripcion: {
+  description: {
     type: DataTypes.TEXT,
     allowNull: true
   },

@@ -7,37 +7,37 @@ const sequelize = require('../../database.js');
     }
   }
   ProductsPerisble.init({
-    products_perishables_id: {
+    product_perishable_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       autoIncrement: true,
       primaryKey: true
     },
-    nombre: {
+    name: {
         type: DataTypes.STRING,
         allowNull: false
       },
-      descripcion: {
+      description: {
         type: DataTypes.STRING,
         allowNull: false
       },
-      descuento: {
+      discount: {
         type: DataTypes.DOUBLE,
         allowNull: false
       },
-      categoria_id: {
+      category_id: {
         type: DataTypes.INTEGER,
         allowNull: false
       },
-      marca: {
+      brand: {
         type: DataTypes.STRING,
         allowNull: false
       },
-      imagenes: {
+      images: {
         type: DataTypes.JSON,
         allowNull: false
       },
-      fecha_creacion: {
+      creation_date: {
         type: DataTypes.DATE,
         allowNull: false
       },

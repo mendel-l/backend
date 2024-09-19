@@ -14,15 +14,15 @@ const sequelize = require('../../database.js');
       autoIncrement: true,
       primaryKey: true
     },
-    nombre: {
+    name: {
       type: DataTypes.STRING(255),
       allowNull: false
     },
-    direccion: {
+    address: {
       type: DataTypes.TEXT,
       allowNull: true
     },
-    telefono: {
+    phone: {
       type: DataTypes.STRING(20),
       allowNull: true
     },
@@ -30,7 +30,7 @@ const sequelize = require('../../database.js');
       type: DataTypes.STRING(255),
       allowNull: true
     },
-    fecha_creacion: {
+    creation_date: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')

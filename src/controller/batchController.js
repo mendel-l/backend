@@ -21,7 +21,7 @@ class BatchController {
       const newBatch = await Batch.create({
         quantity,
         expiration_date: formattedExpirationDate,
-        manufacturin_date: formattedManufacturinDate,
+        manufacturing_date: formattedManufacturinDate,
         fecha_notificacion: currentDateTime
       });
 

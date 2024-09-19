@@ -10,11 +10,11 @@ User.init({
     autoIncrement: true,
     primaryKey: true
   },
-  nombre: {
+  first_name: {
     type: DataTypes.STRING(100),
     allowNull: false
   },
-  apellido: {
+  last_name: {
     type: DataTypes.STRING(100),
     allowNull: false
   },
@@ -23,15 +23,15 @@ User.init({
     allowNull: false,
     unique: true
   },
-  contraseña: {
+  password: {
     type: DataTypes.STRING(255),
     allowNull: false
   },
-  telefono: {
+  phone: {
     type: DataTypes.STRING(20),
     allowNull: true
   },
-  direccion: {
+  address: {
     type: DataTypes.TEXT,
     allowNull: true
   },
@@ -47,7 +47,7 @@ User.init({
     allowNull: false,
     defaultValue: true
   },
-  fecha_registro: {
+  registration_date: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW
   }

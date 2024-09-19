@@ -9,25 +9,25 @@ class ProductsNonPerishable extends Model {
 }
 
 ProductsNonPerishable.init({
-  products_non_perishables_id: {
+  product_non_perishable_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     autoIncrement: true,
     primaryKey: true
   },
-  nombre: {
+  name: {
     type: DataTypes.STRING(255),
     allowNull: false
   },
-  descripcion: {
+  description: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  precio: {
+  price: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false
   },
-  descuento: {
+  discount: {
     type: DataTypes.DECIMAL(5, 2),
     allowNull: true
   },
@@ -35,7 +35,7 @@ ProductsNonPerishable.init({
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  categoria_id: {
+  category_id: {
     type: DataTypes.INTEGER,
     allowNull: true,
     references: {
@@ -43,15 +43,15 @@ ProductsNonPerishable.init({
       key: 'categoria_id'
     }
   },
-  marca: {
+  brand: {
     type: DataTypes.STRING(100),
     allowNull: true
   },
-  imagenes: {
+  images: {
     type: DataTypes.JSON,
     allowNull: true
   },
-  fecha_creacion: {
+  creation_date: {
     type: DataTypes.DATE,
     allowNull: false,
     defaultValue: sequelize.literal('CURRENT_TIMESTAMP')

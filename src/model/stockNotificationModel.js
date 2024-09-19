@@ -26,7 +26,7 @@ StockNotification.init({
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  fecha_notificacion: {
+  notification_date: {
     type: DataTypes.DATE,
     allowNull: false
   },
