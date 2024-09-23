@@ -50,6 +50,10 @@ User.init({
   registration_date: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW
+  },
+  username: {
+    type: DataTypes.STRING(255),
+    allowNull: false
   }
 }, {
   sequelize,

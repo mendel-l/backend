@@ -13,7 +13,7 @@ const supplierRoute = require('./routes/supplierRoutes.js');
 const categoryRoute = require('./routes/categoryRoutes.js');
 const batchRoute = require('./routes/batchRoutes.js');
 const roleRoute = require('./routes/rolesRoutes.js');
-
+const loginRoute = require('./routes/loginRoutes.js');
 /* RUTAS SECUNDARIAS */
 const productsPerishableRoutes = require('./routes/productsPerishabRoutes.js');
 const productsNonPerishableRoutes = require('./routes/productsNonPerishablesRoutes.js');
@@ -29,6 +29,7 @@ app.use('/api/', supplierRoute);
 app.use('/api/', categoryRoute);
 app.use('/api/', batchRoute);
 app.use('/api/', roleRoute);
+app.use('/api/', loginRoute);
 
 /* RUTAS SECUNDARIAS */
 app.use('/api/', productsPerishableRoutes);

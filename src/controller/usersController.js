@@ -1,16 +1,26 @@
 'use strict';
 const User = require('../model/usersModel');
-
+const bcrypt = require('bcrypt');
+const saltRounds = 10; 
 class UserController {
 
   async createUser(req, res) {
     try {
-      const newUser = await User.create(req.body);
+      // Encriptar la contraseña antes de crear el usuario
+      const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+      
+      // Crear el nuevo usuario con la contraseña encriptada
+      const newUser = await User.create({
+        ...req.body, // Copia todos los demás campos del cuerpo de la solicitud
+        password: hashedPassword // Reemplaza la contraseña con la encriptada
+      });
+
       res.status(201).json(newUser);
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
   }
+
 
   async findAllUsers(req, res) {
     try {

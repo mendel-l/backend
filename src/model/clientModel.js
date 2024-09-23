@@ -39,8 +39,8 @@ Client.init({
     type: DataTypes.TEXT,
     allowNull: true
   },
-  user_type: {
-    type: DataTypes.ENUM('cliente', 'administrador'),
+  username: {
+    type: DataTypes.STRING(255),
     allowNull: false
   },
   registration_date: {
