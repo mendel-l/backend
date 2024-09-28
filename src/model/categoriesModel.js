@@ -4,6 +4,8 @@ const sequelize = require('../../database.js');
 
 class Category extends Model {
   static associate(models) {
+    Category.hasMany(models.ProductsNonPerishable, { foreignKey: 'category_id' });
+    Category.hasMany(models.ProductsPerishable, { foreignKey: 'category_id' });
   }
 }
 

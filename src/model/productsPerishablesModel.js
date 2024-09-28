@@ -2,64 +2,67 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../../database.js'); 
 
-  class ProductsPerisble extends Model {
-    static associate(models) {
-    }
+class ProductsPerishable extends Model {
+  static associate(models) {
+    ProductsPerishable.belongsTo(models.Category, { foreignKey: 'category_id' });
+    ProductsPerishable.belongsTo(models.Supplier, { foreignKey: 'supplier_id' });
+    ProductsPerishable.belongsTo(models.Batch, { foreignKey: 'batch_id' });
   }
-  ProductsPerisble.init({
-    product_perishable_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true
-    },
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false
-      },
-      description: {
-        type: DataTypes.STRING,
-        allowNull: false
-      },
-      discount: {
-        type: DataTypes.DOUBLE,
-        allowNull: false
-      },
-      category_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-      },
-      brand: {
-        type: DataTypes.STRING,
-        allowNull: false
-      },
-      images: {
-        type: DataTypes.JSON,
-        allowNull: false
-      },
-      creation_date: {
-        type: DataTypes.DATE,
-        allowNull: false
-      },
-      state: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true
-      },
-      batch_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-      },
-      supplier_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-      }
-  }, {
-    sequelize,
-    tableName: 'products_perishables',
-    modelName: 'ProductsPerisble',
-    timestamps: false
-  });
+}
 
+ProductsPerishable.init({
+  product_perishable_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    autoIncrement: true,
+    primaryKey: true
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  description: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  discount: {
+    type: DataTypes.DOUBLE,
+    allowNull: true
+  },
+  category_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  brand: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  images: {
+    type: DataTypes.JSON,
+    allowNull: true
+  },
+  creation_date: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
+  state: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: true
+  },
+  batch_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  supplier_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  }
+}, {
+  sequelize,
+  modelName: 'ProductsPerishable',
+  tableName: 'products_perishables',
+  timestamps: false
+});
 
-module.exports=ProductsPerisble;
+module.exports = ProductsPerishable;

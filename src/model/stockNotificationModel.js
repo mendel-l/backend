@@ -4,6 +4,8 @@ const sequelize = require('../../database.js');
 
 class StockNotification extends Model {
   static associate(models) {
+    StockNotification.belongsTo(models.ProductsPerishable, { foreignKey: 'product_perishable_id' });
+    StockNotification.belongsTo(models.ProductsNonPerishable, { foreignKey: 'product_non_perishable_id' });
   }
 }
 
@@ -14,11 +16,11 @@ StockNotification.init({
     autoIncrement: true,
     primaryKey: true
   },
-  products_perishables_id: {
+  product_perishable_id: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  products_non_perishables_id: {
+  product_non_perishable_id: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
@@ -37,7 +39,7 @@ StockNotification.init({
 }, 
 {
   sequelize,
-  tableName: 'stock_notifications',  // Nombre de la tabla corregido
+  tableName: 'stock_notifications',  
   modelName: 'StockNotification',
   timestamps: false
 });

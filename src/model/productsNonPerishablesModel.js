@@ -4,7 +4,8 @@ const sequelize = require('../../database.js');
 
 class ProductsNonPerishable extends Model {
   static associate(models) {
-
+    ProductsNonPerishable.belongsTo(models.Category, { foreignKey: 'category_id' });
+    ProductsNonPerishable.belongsTo(models.Supplier, { foreignKey: 'supplier_id' });
   }
 }
 
@@ -40,7 +41,7 @@ ProductsNonPerishable.init({
     allowNull: true,
     references: {
       model: 'categories',
-      key: 'categoria_id'
+      key: 'category_id'  // Corrected key name
     }
   },
   brand: {

@@ -4,6 +4,7 @@ const sequelize = require('../../database.js');
 
 class Batch extends Model {
   static associate(models) {
+    Batch.hasMany(models.ProductsPerishable, { foreignKey: 'batch_id' });
   }
 }
 

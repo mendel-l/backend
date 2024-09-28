@@ -1,9 +1,12 @@
 'use strict';
 const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../../database.js'); // Asegúrate de que esta ruta sea correcta
+const sequelize = require('../../database.js');
 
 class Client extends Model {
   static associate(models) {
+    Client.hasMany(models.Cart, { foreignKey: 'client_id' });
+    Client.hasMany(models.Order, { foreignKey: 'client_id' });
+    Client.hasMany(models.Review, { foreignKey: 'client_id' });
   }
 }
 
