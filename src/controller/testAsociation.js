@@ -1,11 +1,9 @@
-// Import models
 const { User, Role } = require('../model/assosiationsModels');
-
-// Example: find all users and include their associated roles
 class Test {
   async findAllUsersWithRoles(req, res) {
     try {
       const users = await User.findAll({
+        attributes: {exclude: ['password']},
         include: [
           {
             model: Role,
