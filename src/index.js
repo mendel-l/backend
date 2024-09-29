@@ -27,7 +27,7 @@ app.use('/api/supllier/', supplierRoute);
 app.use('/api/category/', categoryRoute);
 app.use('/api/batch/', batchRoute);
 app.use('/api/role/', roleRoute);
-app.use('/api/login/', loginRoute);
+app.use('/api/', loginRoute);
 
 // Uso de las rutas secundarias
 app.use('/api/productsPerishable/', productsPerishableRoutes);
