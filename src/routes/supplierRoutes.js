@@ -5,7 +5,7 @@ const authController = require('../controller/authController.js');
 
 router.post('/suppliers', authController.authenticateToken, SupplierController.createSupplier);
 router.put('/suppliers/:id', authController.authenticateToken, SupplierController.updateSupplier);
-router.put('/suppliers/:id', authController.authenticateToken, SupplierController.changeStatusSupplier);
+router.put('/suppliers/:id/status', authController.authenticateToken, SupplierController.changeStatusSupplier);
 
 // router.post('/suppliers', SupplierController.createSupplier);
 // router.put('/suppliers/:id', SupplierController.updateSupplier);

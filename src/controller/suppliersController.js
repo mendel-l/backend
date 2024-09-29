@@ -14,12 +14,14 @@ class SupplierController {
   async updateSupplier(req, res) {
     try {
       const { id } = req.params;
-      const [updated] = await Supplier.Supplier(req.body, { where: { supplier_id: id } });
+      // Corregir el método de actualización
+      const [updated] = await Supplier.update(req.body, { where: { supplier_id: id } });
+
       if (updated) {
         const updatedSupplier = await Supplier.findOne({ where: { supplier_id: id } });
         res.status(200).json(updatedSupplier);
       } else {
-        res.status(404).json({ error: 'Suppliere no encontrado' });
+        res.status(404).json({ error: 'Proveedor no encontrado' });
       }
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -28,8 +30,8 @@ class SupplierController {
 
   async findAllSuppliers(req, res) {
     try {
-      const Suppliers = await Supplier.findAll();  
-        res.status(200).json(Suppliers);
+      const suppliers = await Supplier.findAll();  
+      res.status(200).json(suppliers);
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
@@ -42,7 +44,7 @@ class SupplierController {
       if (foundSupplier) {
         res.status(200).json(foundSupplier);
       } else {
-        res.status(404).json({ error: 'Suppliere no encontrado' });
+        res.status(404).json({ error: 'Proveedor no encontrado' });
       }
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -52,16 +54,24 @@ class SupplierController {
   async changeStatusSupplier(req, res) {
     try {
       const { id } = req.params;
-      const [updated] = await Supplier.update({ state: false }, { where: { supplier_id: id } });
-      if (updated) {
-        res.status(200).json({ message: 'Estado cambiado' });
+      // Obtener el proveedor actual
+      const supplier = await Supplier.findOne({ where: { supplier_id: id } });
+  
+      if (supplier) {
+        // Invertir el estado actual
+        const newState = !supplier.state;
+  
+        // Actualizar el proveedor con el nuevo estado
+        await supplier.update({ state: newState });
+  
+        res.status(200).json({ message: 'Estado cambiado', newState });
       } else {
-        res.status(404).json({ error: 'Suppliere no encontrado' });
+        res.status(404).json({ error: 'Proveedor no encontrado' });
       }
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
-  }
+  }  
 }
 
 module.exports = new SupplierController();
