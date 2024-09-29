@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../model/usersModel');
-
+const { User, Role } = require('../model/assosiationsModels');
 const secretKey = 'tu_clave_secreta'; 
 const blacklistedTokens = []; 
 
@@ -10,24 +9,44 @@ module.exports = {
   async login(req, res) {
     const { username, password } = req.body;
     try {
-      const user = await User.findOne({ where: { username } });
+      // Buscar al usuario y asociar el rol
+      const user = await User.findOne({
+        where: { username},
+         // Excluir la contraseña en la respuesta
+        include: [
+          {
+            model: Role,
+            attributes: ['name'], // Solo obtener el nombre del rol
+          }
+        ]
+      });
 
+      // Verificar si el usuario no existe
       if (!user) {
-        return res.status(401).json({ error: 'Invalid credentials' });
+        return res.status(401).json({ error: 'Credenciales inválidas' });
       }
 
-      // Comparar la contraseña ingresada con la almacenada
+      // Comparar la contraseña ingresada con la almacenada en la base de datos
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        return res.status(401).json({ error: 'Invalid credentials' });
+        return res.status(401).json({ error: 'Credenciales inválidas' });
       }
 
-      // Crear el token JWT
-      const token = jwt.sign({ username: user.username, role: user.role }, secretKey, { expiresIn: '1h' });
+      // Obtener el nombre del rol (asumo que la relación está correctamente definida)
+      const roleName = user.Role ? user.Role.name : null;
 
-      res.json({ token });
+      // Crear el token JWT con la información del usuario
+      const token = jwt.sign({ username: user.username, role: roleName }, secretKey, { expiresIn: '1h' });
+
+      // Responder al frontend con el token, username y role
+      res.json({
+        username: user.username,
+        role: roleName,  // Devuelve el rol
+        token,
+      });
     } catch (error) {
-      res.status(500).json({ error: 'Error logging in' });
+      console.error('Error durante el inicio de sesión:', error);
+      res.status(500).json({ error: 'Error durante el inicio de sesión' });
     }
   },
 

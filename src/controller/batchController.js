@@ -26,7 +26,6 @@ class BatchController {
       res.status(201).json(newBatch);
     } catch (error) {
       res.status(400).json({ error: error.message });
-      console.log(error)
     }
   }
 
@@ -59,7 +58,6 @@ class BatchController {
   async findAllBatches(req, res) {
     try {
       const batches = await Batch.findAll();
-      console.log(batches)
       res.status(200).json(batches);
       
     } catch (error) {
