@@ -11,7 +11,7 @@ router.put('/categories/:id/status', authController.authenticateToken, CategoryC
 // router.put('/categories/:id', CategoryController.updateCategory);
 // router.put('/categories/:id/status', CategoryController.changeStatusCategory);
 
-router.get('/categories', CategoryController.findAllCategories);
-router.get('/categories/:id', CategoryController.findOneCategory);
+router.get('/categories',authController.authenticateToken, CategoryController.findAllCategories);
+router.get('/categories/:id',authController.authenticateToken, CategoryController.findOneCategory);
 
 module.exports = router;

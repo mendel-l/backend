@@ -11,7 +11,7 @@ router.put('/roles/:id/status', authController.authenticateToken, RoleController
 // router.put('/roles/:id', RoleController.updateRole);
 // router.put('/roles/:id/status', RoleController.changeStatusRole);
 
-router.get('/roles', RoleController.findAllRoles);
-router.get('/roles/:id', RoleController.findOneRole);
+router.get('/roles', authController.authenticateToken, RoleController.findAllRoles);
+router.get('/roles/:id',authController.authenticateToken,  RoleController.findOneRole);
 
 module.exports = router;

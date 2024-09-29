@@ -13,7 +13,7 @@ router.put('/update_products_perishables/:products_perishables_id', authControll
 // router.put('/products_perishables/:products_perishables_id', PorductsPerishablesController.changeStatusPorductsPerishables);
 // router.put('/update_products_perishables/:products_perishables_id', PorductsPerishablesController.updateProductsPerishables);
 
-router.get('/products_perishables/:products_perishables_id', PorductsPerishablesController.findOnePorductsPerishables);
-router.get('/products_perishables', PorductsPerishablesController.findAllPorductsPerishables);
+router.get('/products_perishables/:products_perishables_id',authController.authenticateToken, PorductsPerishablesController.findOnePorductsPerishables);
+router.get('/products_perishables',authController.authenticateToken, PorductsPerishablesController.findAllPorductsPerishables);
 
 module.exports = router;

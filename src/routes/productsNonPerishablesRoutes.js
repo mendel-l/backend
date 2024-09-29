@@ -10,6 +10,6 @@ router.put('/products_non_perishables/:id/status', authController.authenticateTo
 
 // Las demás rutas no están protegidas
 router.get('/products_non_perishables', authController.authenticateToken, ProductsNonPerishablesController.findAllProductsNonPerishables);
-router.get('/products_non_perishables/:id', ProductsNonPerishablesController.findOneProductsNonPerishables);
+router.get('/products_non_perishables/:id',authController.authenticateToken, ProductsNonPerishablesController.findOneProductsNonPerishables);
 
 module.exports = router;

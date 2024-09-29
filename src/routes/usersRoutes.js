@@ -11,7 +11,7 @@ router.put('/users/:id/status', authController.authenticateToken, UserController
 // router.put('/users/:id', UserController.updateUser);
 // router.put('/users/:id/status', UserController.changeStatusUser);
 
-router.get('/users', UserController.findAllUsers);
-router.get('/users/:id', UserController.findOneUser);
+router.get('/users',authController.authenticateToken, UserController.findAllUsers);
+router.get('/users/:id',authController.authenticateToken, UserController.findOneUser);
 
 module.exports = router;

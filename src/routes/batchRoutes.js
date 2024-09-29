@@ -11,8 +11,8 @@ router.put('/batches/:id/status', authController.authenticateToken, BatchControl
 // router.put('/batches/:id', BatchController.updateBatch);
 // router.put('/batches/:id/status', BatchController.changeStatusBatch);
 
-router.get('/batches/:id', BatchController.findOneBatch);
-router.get('/batches', BatchController.findAllBatches);
+router.get('/batches/:id',authController.authenticateToken, BatchController.findOneBatch);
+router.get('/batches',authController.authenticateToken, BatchController.findAllBatches);
 
 module.exports = router;
 

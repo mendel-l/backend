@@ -11,7 +11,7 @@ router.put('/suppliers/:id', authController.authenticateToken, SupplierControlle
 // router.put('/suppliers/:id', SupplierController.updateSupplier);
 // router.put('/suppliers/:id', SupplierController.changeStatusSupplier);
 
-router.get('/suppliers/:id', SupplierController.findOneSupplier);
-router.get('/suppliers', SupplierController.findAllSuppliers);
+router.get('/suppliers/:id',authController.authenticateToken, SupplierController.findOneSupplier);
+router.get('/suppliers',authController.authenticateToken, SupplierController.findAllSuppliers);
 
 module.exports = router;

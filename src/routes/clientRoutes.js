@@ -11,7 +11,7 @@ router.put('/clients/:id', authController.authenticateToken, ClientController.ch
 // router.put('/clients/:id', ClientController.updateClient);
 // router.put('/clients/:id', ClientController.changeStatusClient);
 
-router.get('/clients/:id', ClientController.findOneClient);
-router.get('/clients', ClientController.findAllClients);
+router.get('/clients/:id',authController.authenticateToken, ClientController.findOneClient);
+router.get('/clients',authController.authenticateToken, ClientController.findAllClients);
 
 module.exports = router;
