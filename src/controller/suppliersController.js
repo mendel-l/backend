@@ -4,6 +4,13 @@ const Supplier = require('../model/suppliersModel.js');
 class SupplierController {
   async createSupplier(req, res) {
     try {
+      const { phone } = req.body;
+
+      // Validar que el teléfono tenga exactamente 8 caracteres y sea numérico
+      if (!/^\d{8}$/.test(phone)) {
+        return res.status(400).json({ error: 'El teléfono debe contener exactamente 8 dígitos numéricos' });
+      }
+
       const newSupplier = await Supplier.create(req.body);
       res.status(201).json(newSupplier);
     } catch (error) {
@@ -14,7 +21,13 @@ class SupplierController {
   async updateSupplier(req, res) {
     try {
       const { id } = req.params;
-      // Corregir el método de actualización
+      const { phone } = req.body;
+
+      // Validar que el teléfono tenga exactamente 8 caracteres y sea numérico
+      if (!/^\d{8}$/.test(phone)) {
+        return res.status(400).json({ error: 'El teléfono debe contener exactamente 8 dígitos numéricos' });
+      }
+
       const [updated] = await Supplier.update(req.body, { where: { supplier_id: id } });
 
       if (updated) {
