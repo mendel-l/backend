@@ -22,18 +22,18 @@ const userRoute = require('./routes/usersRoutes');
 const assosiationRoute = require('./routes/asostiationTestRoute.js');
 
 // Uso de las rutas principales
-app.use('/api/client/', clientRoute);
-app.use('/api/supllier/', supplierRoute);
-app.use('/api/category/', categoryRoute);
-app.use('/api/batch/', batchRoute);
-app.use('/api/role/', roleRoute);
+app.use('/api/', clientRoute);
+app.use('/api/', supplierRoute);
+app.use('/api/', categoryRoute);
+app.use('/api/', batchRoute);
+app.use('/api/', roleRoute);
 app.use('/api/', loginRoute);
 
 // Uso de las rutas secundarias
-app.use('/api/productsPerishable/', productsPerishableRoutes);
-app.use('/api/productsNonPerishable/', productsNonPerishableRoutes);
+app.use('/api/', productsPerishableRoutes);
+app.use('/api/', productsNonPerishableRoutes);
 app.use('/api/user/', userRoute);
-app.use('/api/assosiation/', assosiationRoute);
+app.use('/api/', assosiationRoute);
 
 // Servidor escuchando
 const port = process.env.PORT || 3001;
