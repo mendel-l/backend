@@ -7,43 +7,46 @@ function parseDate(input) {
 }
 
 class BatchController {
+  // Crear un nuevo lote (batch)
   async createBatch(req, res) {
     try {
-      const { quantity, expiration_date, manufacturin_date } = req.body;
+      const { quantity, expiration_date, manufacturing_date, notification_date } = req.body;
 
-      // Convertir las fechas del formato dd/mm/yyyy al formato yyyy-mm-dd
-      const formattedExpirationDate = parseDate(expiration_date);
-      const formattedManufacturinDate = parseDate(manufacturin_date);
 
-      // Obtener la fecha y hora actual
-      const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
+      // Crear el nuevo lote en la base de datos
       const newBatch = await Batch.create({
         quantity,
-        expiration_date: formattedExpirationDate,
-        manufacturing_date: formattedManufacturinDate,
-        fecha_notificacion: currentDateTime
+        expiration_date,
+        manufacturing_date,
+        notification_date,
+        state:true
       });
 
       res.status(201).json(newBatch);
     } catch (error) {
       res.status(400).json({ error: error.message });
+      console.log(error)
     }
   }
 
+  // Actualizar un lote existente
   async updateBatch(req, res) {
     try {
       const { id } = req.params;
-      const { quantity, expiration_date, manufacturin_date } = req.body;
+      const { quantity, expiration_date, manufacturing_date, notification_date } = req.body;
 
-      // Convertir las fechas del formato dd/mm/yyyy al formato yyyy-mm-dd
+      // Convertir las fechas de formato dd/mm/yyyy a yyyy-mm-dd
       const formattedExpirationDate = parseDate(expiration_date);
-      const formattedManufacturinDate = parseDate(manufacturin_date);
+      const formattedManufacturingDate = parseDate(manufacturing_date);
+      const formattedNotificationDate = notification_date ? parseDate(notification_date) : null;
 
+      // Actualizar el lote con los nuevos valores
       const [updated] = await Batch.update({
         quantity,
         expiration_date: formattedExpirationDate,
-        manufacturin_date: formattedManufacturinDate
+        manufacturing_date: formattedManufacturingDate,
+        notification_date: formattedNotificationDate
       }, { where: { batch_id: id } });
 
       if (updated) {
@@ -57,15 +60,19 @@ class BatchController {
     }
   }
 
+  // Obtener todos los lotes
   async findAllBatches(req, res) {
     try {
       const batches = await Batch.findAll();
+      console.log(batches)
       res.status(200).json(batches);
+      
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
   }
 
+  // Obtener un lote por su ID
   async findOneBatch(req, res) {
     try {
       const { id } = req.params;
@@ -80,6 +87,7 @@ class BatchController {
     }
   }
 
+  // Cambiar el estado de un lote a inactivo
   async changeStatusBatch(req, res) {
     try {
       const { id } = req.params;
