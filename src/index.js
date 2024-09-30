@@ -1,11 +1,14 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json()); 
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.json({ limit: '50mb' }));  // Límite de 50 MB para JSON
+app.use(express.urlencoded({ limit: '50mb', extended: true }));  // Límite de 50 MB para formularios
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Rutas principales
 const clientRoute = require('./routes/clientRoutes.js');
@@ -18,8 +21,8 @@ const loginRoute = require('./routes/loginRoutes.js');
 // Rutas secundarias
 const productsPerishableRoutes = require('./routes/productsPerishabRoutes.js');
 const productsNonPerishableRoutes = require('./routes/productsNonPerishablesRoutes.js');
-const userRoute = require('./routes/usersRoutes');
-const assosiationRoute = require('./routes/asostiationTestRoute.js');
+const userRoute = require('./routes/usersRoutes.js');
+const associationRoute = require('./routes/asostiationTestRoute.js');
 
 // Uso de las rutas principales
 app.use('/api/', clientRoute);
@@ -33,7 +36,7 @@ app.use('/api/', loginRoute);
 app.use('/api/', productsPerishableRoutes);
 app.use('/api/', productsNonPerishableRoutes);
 app.use('/api/user/', userRoute);
-app.use('/api/', assosiationRoute);
+app.use('/api/', associationRoute);
 
 // Servidor escuchando
 const port = process.env.PORT || 3001;
