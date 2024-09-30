@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));  // Límite de 50 MB para JSON
 app.use(express.urlencoded({ limit: '50mb', extended: true }));  // Límite de 50 MB para formularios
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Rutas principales
 const clientRoute = require('./routes/clientRoutes.js');
