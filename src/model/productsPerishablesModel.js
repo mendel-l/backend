@@ -57,6 +57,10 @@ ProductsPerishable.init({
   supplier_id: {
     type: DataTypes.INTEGER,
     allowNull: true
+  },
+  price: {
+    type: DataTypes.DOUBLE,
+    allowNull: true
   }
 }, {
   sequelize,

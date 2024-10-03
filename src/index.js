@@ -17,6 +17,7 @@ const categoryRoute = require('./routes/categoryRoutes.js');
 const batchRoute = require('./routes/batchRoutes.js');
 const roleRoute = require('./routes/rolesRoutes.js');
 const loginRoute = require('./routes/loginRoutes.js');
+const eComerceData = require('./routes/eComerceDataRoute.js');
 
 // Rutas secundarias
 const productsPerishableRoutes = require('./routes/productsPerishabRoutes.js');
@@ -37,6 +38,9 @@ app.use('/api/', productsPerishableRoutes);
 app.use('/api/', productsNonPerishableRoutes);
 app.use('/api/user/', userRoute);
 app.use('/api/', associationRoute);
+
+//Rutas publicas
+app.use('/api/', eComerceData);
 
 // Servidor escuchando
 const port = process.env.PORT || 3001;
