@@ -6,5 +6,7 @@ const router = express.Router();
 // Ruta para iniciar sesión
 router.get('/data/products', eComerceData.FindAllProducts);
 
+router.get('/data/productsInterest', eComerceData.productItCanInterest);
+
 
 module.exports = router;
