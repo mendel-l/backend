@@ -10,7 +10,7 @@ class BatchController {
   // Crear un nuevo lote (batch)
   async createBatch(req, res) {
     try {
-      const { quantity, expiration_date, manufacturing_date, notification_date } = req.body;
+      const { quantity, expiration_date, manufacturing_date, notification_date, code_batch} = req.body;
 
 
 
@@ -20,7 +20,8 @@ class BatchController {
         expiration_date,
         manufacturing_date,
         notification_date,
-        state:true
+        state:true,
+        code_batch
       });
 
       res.status(201).json(newBatch);
@@ -40,7 +41,8 @@ class BatchController {
         quantity,
         expiration_date,
         manufacturing_date,
-        notification_date
+        notification_date,
+        code_batch
       }, { where: { batch_id: id } });
 
       if (updated) {

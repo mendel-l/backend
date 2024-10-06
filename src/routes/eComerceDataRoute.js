@@ -8,5 +8,7 @@ router.get('/data/products', eComerceData.FindAllProducts);
 
 router.get('/data/productsInterest', eComerceData.productItCanInterest);
 
+router.get('/data/productsType/:typeProduct', eComerceData.findProductsType);
+
 
 module.exports = router;

@@ -36,6 +36,10 @@ Batch.init({
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: true
+  },
+  code_batch: {
+    type: DataTypes.STRING(255),
+    allowNull: false
   }
 }, {
   sequelize,
