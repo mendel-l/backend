@@ -69,6 +69,14 @@ ProductsNonPerishable.init({
       model: 'suppliers',
       key: 'supplier_id'
     }
+  },
+  keywords: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  meta_description: {
+    type: DataTypes.STRING,
+    allowNull: true
   }
 }, {
   sequelize,

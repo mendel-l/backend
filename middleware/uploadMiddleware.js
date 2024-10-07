@@ -19,7 +19,6 @@ function fileFilter(req, file, cb) {
 
 // Configuración de almacenamiento personalizado
 const storage = multer.diskStorage({
-  // No necesitamos modificar 'destination' y 'filename'
   destination: function (req, file, cb) {
     cb(null, 'uploads/'); // Asegúrate de que esta carpeta exista
   },
@@ -38,7 +37,10 @@ const customStorage = {
 
     // Procesar la imagen con Sharp y guardarla
     const transformer = sharp()
-      .resize(500, 500)
+      .resize(500, 500, {
+        fit: 'inside', // Redimensionar sin recortar, ajustando dentro de 500x500
+        withoutEnlargement: true, // No ampliar si la imagen ya es más pequeña
+      })
       .toFormat('jpeg');
 
     const outStream = fs.createWriteStream(filepath);

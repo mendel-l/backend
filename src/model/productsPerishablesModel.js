@@ -61,6 +61,14 @@ ProductsPerishable.init({
   price: {
     type: DataTypes.DOUBLE,
     allowNull: true
+  },
+  keywords: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  meta_description: {
+    type: DataTypes.STRING,
+    allowNull: true
   }
 }, {
   sequelize,

@@ -1,12 +1,18 @@
 const { and } = require('sequelize');
 const { ProductsPerishable, ProductsNonPerishable, Category, Batch, Supplier } = require('../model/assosiationsModels');
+
+function getFullImagePaths(images) {
+  const baseUrl = `${process.env.BASE_URL || 'http://localhost:3001'}/`; // Cambia el puerto y URL si es necesario
+  return images.map(image => `${baseUrl}${image.replace(/\\/g, '/')}`);
+}
+
 class eComerceData {
 
   async FindAllProducts(req, res) {
     try {
       // Obtener productos perecederos
       const productPerishables = await ProductsPerishable.findAll({
-        attributes: ['name', 'description', 'discount', 'brand', 'images', 'price'],
+        attributes: ['name', 'description', 'discount', 'brand', 'images', 'price', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -21,11 +27,11 @@ class eComerceData {
           state: true
         }
       });
-  
+
       // Crear un objeto para agrupar productos perecederos por nombre
       const groupedPerishables = productPerishables.reduce((acc, product) => {
         const productName = product.name;
-  
+
         // Si el producto ya existe, sumar la cantidad del lote
         if (acc[productName]) {
           acc[productName].quantity += product.Batch.quantity;
@@ -37,28 +43,29 @@ class eComerceData {
           };
           delete acc[productName].Batch; // Eliminar la información innecesaria de 'Batch'
         }
-  
+
         return acc;
       }, {});
-  
+
       // Convertir el objeto en un array de productos perecederos agrupados
       const mergedPerishables = Object.values(groupedPerishables).map(product => {
-        // Eliminar información innecesaria y mantener solo lo que necesitas
         return {
           name: product.name,
           description: product.description,
           discount: product.discount,
           brand: product.brand,
-          images: product.images,
+          images: getFullImagePaths(product.images), // Corrección aquí
           price: product.price,
           category: product.Category.name,
+          keywords: product.keywords,
+          meta_description: product.meta_description,
           quantity: product.quantity
         };
       });
-  
+
       // Obtener productos no perecederos
       const productNonPerishable = await ProductsNonPerishable.findAll({
-        attributes: ['name', 'description', 'price', 'discount', 'stock', 'brand', 'images'],
+        attributes: ['name', 'description', 'price', 'discount', 'stock', 'brand', 'images', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -69,7 +76,7 @@ class eComerceData {
           state: true
         }
       });
-  
+
       // Combinar productos perecederos agrupados y no perecederos
       const allProducts = [...mergedPerishables, ...productNonPerishable.map(product => {
         return {
@@ -79,22 +86,23 @@ class eComerceData {
           discount: product.discount,
           stock: product.stock,
           brand: product.brand,
-          images: product.images,
+          images: getFullImagePaths(product.images), // Corrección aquí
+          keywords: product.keywords,
+          meta_description: product.meta_description,
           category: product.Category.name
         };
       })];
-  
+
       res.status(200).json(allProducts);
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
   }
-  
-  
+
   async productItCanInterest(req, res) {
     try {
       const productPerishables = await ProductsPerishable.findAll({
-        attributes: ['name', 'description', 'discount', 'brand', 'images', 'price'],
+        attributes: ['name', 'description', 'discount', 'brand', 'images', 'price', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -109,9 +117,9 @@ class eComerceData {
           state: true,
         },
       });
-  
+
       const productNonPerishable = await ProductsNonPerishable.findAll({
-        attributes: ['name', 'description', 'price', 'discount', 'stock', 'brand', 'images'],
+        attributes: ['name', 'description', 'price', 'discount', 'stock', 'brand', 'images', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -122,10 +130,19 @@ class eComerceData {
           state: true,
         },
       });
-  
+
       // Combinar los productos en un solo array
-      const allProducts = [...productPerishables, ...productNonPerishable];
-  
+      const allProducts = [
+        ...productPerishables.map(product => ({
+          ...product.toJSON(),
+          images: getFullImagePaths(product.images), // Añadir URL completa a las imágenes
+        })),
+        ...productNonPerishable.map(product => ({
+          ...product.toJSON(),
+          images: getFullImagePaths(product.images), // Añadir URL completa a las imágenes
+        })),
+      ];
+
       // Función para mezclar el array de forma aleatoria
       function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -134,28 +151,28 @@ class eComerceData {
         }
         return array;
       }
-  
+
       // Mezclar los productos
       const shuffledProducts = shuffle(allProducts);
-  
+
       res.status(200).json(shuffledProducts);
     } catch (error) {
       res.status(400).json({ error: error.message });
       console.log(error);
     }
   }
-  
+
   async findProductsType(req, res) {
-    const { typeProduct } = req.params; // Destructuración de los parámetros
+    const { typeProduct } = req.params;
     try {
       // Buscar productos perecederos
       const productPerishables = await ProductsPerishable.findAll({
-        attributes: ['name', 'description', 'discount', 'brand', 'images', 'price'],
+        attributes: ['name', 'description', 'discount', 'brand', 'images', 'price', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
             attributes: ['name'],
-            where: { name: typeProduct }, // Acceder correctamente a la categoría
+            where: { name: typeProduct },
           },
           {
             model: Batch,
@@ -163,35 +180,43 @@ class eComerceData {
           },
         ],
         where: {
-          state: true, // Solo productos activos
+          state: true,
         },
       });
-  
+
       // Buscar productos no perecederos
       const productNonPerishable = await ProductsNonPerishable.findAll({
-        attributes: ['name', 'description', 'price', 'discount', 'stock', 'brand', 'images'],
+        attributes: ['name', 'description', 'price', 'discount', 'stock', 'brand', 'images', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
             attributes: ['name'],
-            where: { name: typeProduct }, // Acceder correctamente a la categoría
+            where: { name: typeProduct },
           },
         ],
         where: {
-          state: true, // Solo productos activos
+          state: true,
         },
       });
-  
+
       // Combinar ambos tipos de productos
-      const allProducts = [...productPerishables, ...productNonPerishable];
-  
+      const allProducts = [
+        ...productPerishables.map(product => ({
+          ...product.toJSON(),
+          images: getFullImagePaths(product.images), // Añadir URL completa a las imágenes
+        })),
+        ...productNonPerishable.map(product => ({
+          ...product.toJSON(),
+          images: getFullImagePaths(product.images), // Añadir URL completa a las imágenes
+        })),
+      ];
+
       res.status(200).json(allProducts);
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
   }
-  
-      
+
 }
 
 module.exports = new eComerceData();
