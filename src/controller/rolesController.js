@@ -53,16 +53,25 @@ class RoleController {
   async changeStatusRole(req, res) {
     try {
       const { id } = req.params;
-      const [updated] = await Role.update({ state: false }, { where: { role_id: id } });
-      if (updated) {
-        res.status(200).json({ message: 'Estado del rol cambiado a inactivo' });
+  
+      // Obtener el rol actual
+      const role = await Role.findOne({ where: { role_id: id } });
+  
+      if (role) {
+        // Invertir el estado actual
+        const newState = !role.state;
+  
+        // Actualizar el rol con el nuevo estado
+        await role.update({ state: newState });
+  
+        res.status(200).json({ message: 'Estado del rol cambiado', newState });
       } else {
         res.status(404).json({ error: 'Rol no encontrado' });
       }
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
-  }
+  }  
 }
 
 module.exports = new RoleController();
