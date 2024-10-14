@@ -36,7 +36,7 @@ app.use('/api/', loginRoute);
 // Uso de las rutas secundarias
 app.use('/api/', productsPerishableRoutes);
 app.use('/api/', productsNonPerishableRoutes);
-app.use('/api/user/', userRoute);
+app.use('/api/', userRoute);
 app.use('/api/', associationRoute);
 
 //Rutas publicas
