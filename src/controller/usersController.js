@@ -63,18 +63,22 @@ class UserController {
   async changeStatusUser(req, res) {
     try {
       const { id } = req.params;
+  
       // Obtener el usuario actual
       const user = await User.findOne({ where: { user_id: id } });
-      
-      if (!user) {
-        return res.status(404).json({ error: 'Usuario no encontrado' });
+  
+      if (user) {
+        // Invertir el estado actual
+        const newState = !user.state;
+  
+        // Actualizar el usuario con el nuevo estado
+        await user.update({ state: newState });
+  
+        // Enviar una respuesta indicando el nuevo estado
+        res.status(200).json({ message: 'Estado del usuario cambiado', newState });
+      } else {
+        res.status(404).json({ error: 'Usuario no encontrado' });
       }
-  
-      // Cambiar el estado al opuesto actual
-      const newState = !user.state; // Si es verdadero lo cambia a falso, y viceversa
-      await User.update({ state: newState }, { where: { user_id: id } });
-  
-      res.status(200).json({ message: `Estado del usuario cambiado a ${newState ? 'activo' : 'inactivo'}` });
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
