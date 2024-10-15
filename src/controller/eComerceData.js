@@ -1,5 +1,6 @@
 const { and } = require('sequelize');
 const { ProductsPerishable, ProductsNonPerishable, Category, Batch, Supplier } = require('../model/assosiationsModels');
+const { Op } = require('sequelize');
 
 function getFullImagePaths(images) {
   const baseUrl = `${process.env.BASE_URL || 'http://localhost:3001'}/`; // Cambia el puerto y URL si es necesario
@@ -217,6 +218,45 @@ class eComerceData {
     }
   }
 
+  async searchProducts(req, res) {
+    const { query } = req.query;
+
+    if (!query) {
+      return res.status(400).json({ error: 'Search query is required' });
+    }
+
+    try {
+      const perishableProducts = await ProductsPerishable.findAll({
+        where: {
+          name: {
+            [Op.like]: `%${query}%` // Usamos Op.like para hacer una búsqueda insensible a mayúsculas
+          },
+          state: true
+        },
+        attributes: ['name'],
+      });
+
+      const nonPerishableProducts = await ProductsNonPerishable.findAll({
+        where: {
+          name: {
+            [Op.like]: `%${query}%` // Aquí también
+          },
+          state: true
+        },
+        attributes: ['name'],
+      });
+
+      const allProducts = [
+        ...perishableProducts.map(product => product.name),
+        ...nonPerishableProducts.map(product => product.name),
+      ];
+
+      res.status(200).json(allProducts);
+    } catch (error) {
+      console.error('Search error:', error); // Loguea el error
+      res.status(500).json({ error: 'An error occurred while searching for products' });
+    }
+  }
 }
 
 module.exports = new eComerceData();
