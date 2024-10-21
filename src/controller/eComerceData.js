@@ -11,7 +11,6 @@ class eComerceData {
 
   async FindAllProducts(req, res) {
     try {
-      // Obtener productos perecederos
       const productPerishables = await ProductsPerishable.findAll({
         attributes: ['name', 'description', 'discount', 'brand', 'images', 'price', 'keywords', 'meta_description'],
         include: [
@@ -29,33 +28,29 @@ class eComerceData {
         }
       });
 
-      // Crear un objeto para agrupar productos perecederos por nombre
       const groupedPerishables = productPerishables.reduce((acc, product) => {
         const productName = product.name;
 
-        // Si el producto ya existe, sumar la cantidad del lote
         if (acc[productName]) {
           acc[productName].quantity += product.Batch.quantity;
         } else {
-          // Si no existe, agregar el producto con solo la cantidad
           acc[productName] = {
-            ...product.toJSON(), // Convertir el objeto Sequelize a un objeto plano
-            quantity: product.Batch.quantity // Solo incluir la cantidad
+            ...product.toJSON(),
+            quantity: product.Batch.quantity
           };
-          delete acc[productName].Batch; // Eliminar la información innecesaria de 'Batch'
+          delete acc[productName].Batch;
         }
 
         return acc;
       }, {});
 
-      // Convertir el objeto en un array de productos perecederos agrupados
       const mergedPerishables = Object.values(groupedPerishables).map(product => {
         return {
           name: product.name,
           description: product.description,
           discount: product.discount,
           brand: product.brand,
-          images: getFullImagePaths(product.images), // Corrección aquí
+          images: getFullImagePaths(product.images),
           price: product.price,
           category: product.Category.name,
           keywords: product.keywords,
@@ -64,7 +59,6 @@ class eComerceData {
         };
       });
 
-      // Obtener productos no perecederos
       const productNonPerishable = await ProductsNonPerishable.findAll({
         attributes: ['name', 'description', 'price', 'discount', 'stock', 'brand', 'images', 'keywords', 'meta_description'],
         include: [
@@ -78,7 +72,6 @@ class eComerceData {
         }
       });
 
-      // Combinar productos perecederos agrupados y no perecederos
       const allProducts = [...mergedPerishables, ...productNonPerishable.map(product => {
         return {
           name: product.name,
@@ -87,7 +80,7 @@ class eComerceData {
           discount: product.discount,
           stock: product.stock,
           brand: product.brand,
-          images: getFullImagePaths(product.images), // Corrección aquí
+          images: getFullImagePaths(product.images),
           keywords: product.keywords,
           meta_description: product.meta_description,
           category: product.Category.name
@@ -103,7 +96,7 @@ class eComerceData {
   async productItCanInterest(req, res) {
     try {
       const productPerishables = await ProductsPerishable.findAll({
-        attributes: ['name', 'description', 'discount', 'brand', 'images', 'price', 'keywords', 'meta_description'],
+        attributes: ['name', 'description', 'brand', 'images', 'price', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -116,11 +109,12 @@ class eComerceData {
         ],
         where: {
           state: true,
+          discount: 0,
         },
       });
-
+  
       const productNonPerishable = await ProductsNonPerishable.findAll({
-        attributes: ['name', 'description', 'price', 'discount', 'stock', 'brand', 'images', 'keywords', 'meta_description'],
+        attributes: ['name', 'description', 'price', 'stock', 'brand', 'images', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -129,22 +123,21 @@ class eComerceData {
         ],
         where: {
           state: true,
+          discount: 0,
         },
       });
-
-      // Combinar los productos en un solo array
+  
       const allProducts = [
         ...productPerishables.map(product => ({
           ...product.toJSON(),
-          images: getFullImagePaths(product.images), // Añadir URL completa a las imágenes
+          images: getFullImagePaths(product.images),
         })),
         ...productNonPerishable.map(product => ({
           ...product.toJSON(),
-          images: getFullImagePaths(product.images), // Añadir URL completa a las imágenes
+          images: getFullImagePaths(product.images),
         })),
       ];
-
-      // Función para mezclar el array de forma aleatoria
+  
       function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
@@ -152,21 +145,88 @@ class eComerceData {
         }
         return array;
       }
-
-      // Mezclar los productos
+    
       const shuffledProducts = shuffle(allProducts);
-
-      res.status(200).json(shuffledProducts);
+      const limitedProducts = shuffledProducts.slice(0, 6);
+  
+      res.status(200).json(limitedProducts);
     } catch (error) {
       res.status(400).json({ error: error.message });
       console.log(error);
     }
   }
 
+  async productsWithDiscount(req, res) {
+    try {
+      const productPerishables = await ProductsPerishable.findAll({
+        attributes: ['name', 'description', 'brand', 'images', 'price', 'discount', 'keywords', 'meta_description'],
+        include: [
+          {
+            model: Category,
+            attributes: ['name'],
+          },
+          {
+            model: Batch,
+            attributes: ['quantity'],
+          },
+        ],
+        where: {
+          state: true,
+          discount: {
+            [Op.gt]: 0,
+          },
+        },
+      });
+  
+      const productNonPerishable = await ProductsNonPerishable.findAll({
+        attributes: ['name', 'description', 'price', 'stock', 'brand', 'images', 'discount', 'keywords', 'meta_description'],
+        include: [
+          {
+            model: Category,
+            attributes: ['name'],
+          },
+        ],
+        where: {
+          state: true,
+          discount: {
+            [Op.gt]: 0,
+          },
+        },
+      });
+  
+      const allProducts = [
+        ...productPerishables.map(product => ({
+          ...product.toJSON(),
+          images: getFullImagePaths(product.images),
+        })),
+        ...productNonPerishable.map(product => ({
+          ...product.toJSON(),
+          images: getFullImagePaths(product.images),
+        })),
+      ];
+  
+      function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+  
+      const shuffledProducts = shuffle(allProducts);
+      const limitedProducts = shuffledProducts.slice(0, 6);
+  
+      res.status(200).json(limitedProducts);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+      console.log(error);
+    }
+  }
+  
+
   async findProductsType(req, res) {
     const { typeProduct } = req.params;
     try {
-      // Buscar productos perecederos
       const productPerishables = await ProductsPerishable.findAll({
         attributes: ['name', 'description', 'discount', 'brand', 'images', 'price', 'keywords', 'meta_description'],
         include: [
