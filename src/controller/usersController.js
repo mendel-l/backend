@@ -48,7 +48,15 @@ class UserController {
   async updateUser(req, res) {
     try {
       const { id } = req.params;
+      
+      // Verificar si la contraseña está en el cuerpo de la solicitud
+      if (req.body.password) {
+        // Encriptar la nueva contraseña
+        req.body.password = await bcrypt.hash(req.body.password, saltRounds);
+      }
+  
       const [updated] = await User.update(req.body, { where: { user_id: id } });
+  
       if (updated) {
         const updatedUser = await User.findOne({ where: { user_id: id } });
         res.status(200).json(updatedUser);
