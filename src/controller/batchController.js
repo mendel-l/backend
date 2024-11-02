@@ -7,22 +7,21 @@ function parseDate(input) {
 }
 
 class BatchController {
+  // Crear un nuevo lote (batch)
   async createBatch(req, res) {
     try {
-      const { quantity, expiration_date, manufacturin_date } = req.body;
+      const { quantity, expiration_date, manufacturing_date, notification_date, code_batch} = req.body;
 
-      // Convertir las fechas del formato dd/mm/yyyy al formato yyyy-mm-dd
-      const formattedExpirationDate = parseDate(expiration_date);
-      const formattedManufacturinDate = parseDate(manufacturin_date);
 
-      // Obtener la fecha y hora actual
-      const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
+      // Crear el nuevo lote en la base de datos
       const newBatch = await Batch.create({
         quantity,
-        expiration_date: formattedExpirationDate,
-        manufacturin_date: formattedManufacturinDate,
-        fecha_notificacion: currentDateTime
+        expiration_date,
+        manufacturing_date,
+        notification_date,
+        state:true,
+        code_batch
       });
 
       res.status(201).json(newBatch);
@@ -31,19 +30,19 @@ class BatchController {
     }
   }
 
+  // Actualizar un lote existente
   async updateBatch(req, res) {
     try {
       const { id } = req.params;
-      const { quantity, expiration_date, manufacturin_date } = req.body;
+      const { quantity, expiration_date, manufacturing_date, notification_date } = req.body;
 
-      // Convertir las fechas del formato dd/mm/yyyy al formato yyyy-mm-dd
-      const formattedExpirationDate = parseDate(expiration_date);
-      const formattedManufacturinDate = parseDate(manufacturin_date);
-
+      // Actualizar el lote con los nuevos valores
       const [updated] = await Batch.update({
         quantity,
-        expiration_date: formattedExpirationDate,
-        manufacturin_date: formattedManufacturinDate
+        expiration_date,
+        manufacturing_date,
+        notification_date,
+        code_batch
       }, { where: { batch_id: id } });
 
       if (updated) {
@@ -57,15 +56,18 @@ class BatchController {
     }
   }
 
+  // Obtener todos los lotes
   async findAllBatches(req, res) {
     try {
       const batches = await Batch.findAll();
       res.status(200).json(batches);
+      
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
   }
 
+  // Obtener un lote por su ID
   async findOneBatch(req, res) {
     try {
       const { id } = req.params;
@@ -80,12 +82,22 @@ class BatchController {
     }
   }
 
+  // Cambiar el estado de un lote a inactivo
   async changeStatusBatch(req, res) {
     try {
       const { id } = req.params;
-      const [updated] = await Batch.update({ state: false }, { where: { batch_id: id } });
-      if (updated) {
-        res.status(200).json({ message: 'Estado cambiado' });
+  
+      // Obtener el lote actual
+      const batch = await Batch.findOne({ where: { batch_id: id } });
+  
+      if (batch) {
+        // Invertir el estado actual
+        const newState = !batch.state;
+  
+        // Actualizar el lote con el nuevo estado
+        await batch.update({ state: newState });
+  
+        res.status(200).json({ message: 'Estado cambiado', newState });
       } else {
         res.status(404).json({ error: 'Batch no encontrado' });
       }
@@ -93,6 +105,7 @@ class BatchController {
       res.status(400).json({ error: error.message });
     }
   }
+  
 }
 
 module.exports = new BatchController();

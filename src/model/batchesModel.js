@@ -4,6 +4,7 @@ const sequelize = require('../../database.js');
 
 class Batch extends Model {
   static associate(models) {
+    Batch.hasMany(models.ProductsPerishable, { foreignKey: 'batch_id' });
   }
 }
 
@@ -22,12 +23,12 @@ Batch.init({
     type: DataTypes.DATE,
     allowNull: false
   },
-  fecha_notificacion: {
+  notification_date: {
     type: DataTypes.DATE,
     allowNull: true,
     defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
   },
-  manufacturin_date: {
+  manufacturing_date: {
     type: DataTypes.DATE,
     allowNull: false
   },
@@ -35,6 +36,10 @@ Batch.init({
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: true
+  },
+  code_batch: {
+    type: DataTypes.STRING(255),
+    allowNull: false
   }
 }, {
   sequelize,

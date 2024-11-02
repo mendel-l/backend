@@ -4,21 +4,23 @@ const sequelize = require('../../database.js');
 
 class Category extends Model {
   static associate(models) {
+    Category.hasMany(models.ProductsNonPerishable, { foreignKey: 'category_id' });
+    Category.hasMany(models.ProductsPerishable, { foreignKey: 'category_id' });
   }
 }
 
 Category.init({
-  categoria_id: {
+  category_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     autoIncrement: true,
     primaryKey: true
   },
-  nombre: {
+  name: {
     type: DataTypes.STRING(100),
     allowNull: false
   },
-  descripcion: {
+  description: {
     type: DataTypes.TEXT,
     allowNull: true
   },

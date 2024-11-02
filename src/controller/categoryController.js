@@ -14,9 +14,9 @@ class CategoryController {
   async updateCategory(req, res) {
     try {
       const { id } = req.params;
-      const [updated] = await Category.update(req.body, { where: { categoria_id: id } });
+      const [updated] = await Category.update(req.body, { where: { category_id: id } }); // Cambiar a "category_id"
       if (updated) {
-        const updatedCategory = await Category.findOne({ where: { categoria_id: id } });
+        const updatedCategory = await Category.findOne({ where: { category_id: id } }); // Cambiar a "category_id"
         res.status(200).json(updatedCategory);
       } else {
         res.status(404).json({ error: 'Categoría no encontrada' });
@@ -38,7 +38,7 @@ class CategoryController {
   async findOneCategory(req, res) {
     try {
       const { id } = req.params;
-      const foundCategory = await Category.findOne({ where: { categoria_id: id } });
+      const foundCategory = await Category.findOne({ where: { category_id: id } }); // Cambiar a "category_id"
       if (foundCategory) {
         res.status(200).json(foundCategory);
       } else {
@@ -52,16 +52,24 @@ class CategoryController {
   async changeStatusCategory(req, res) {
     try {
       const { id } = req.params;
-      const [updated] = await Category.update({ state: false }, { where: { categoria_id: id } });
-      if (updated) {
-        res.status(200).json({ message: 'Estado cambiado' });
+      // Obtener la categoría actual
+      const category = await Category.findOne({ where: { category_id: id } });
+  
+      if (category) {
+        // Invertir el estado actual
+        const newState = !category.state;
+  
+        // Actualizar la categoría con el nuevo estado
+        await category.update({ state: newState });
+  
+        res.status(200).json({ message: 'Estado cambiado', newState });
       } else {
         res.status(404).json({ error: 'Categoría no encontrada' });
       }
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
-  }
+  }   
 }
 
 module.exports = new CategoryController();

@@ -2,18 +2,11 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../../database.js');
 
-class Client extends Model {
-  static associate(models) {
-    Client.hasMany(models.Cart, { foreignKey: 'client_id' });
-    Client.hasMany(models.Order, { foreignKey: 'client_id' });
-    Client.hasMany(models.Review, { foreignKey: 'client_id' });
-  }
-}
+class User extends Model {}
 
-Client.init({
-  client_id: {
+User.init({
+  user_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
     autoIncrement: true,
     primaryKey: true
   },
@@ -42,25 +35,31 @@ Client.init({
     type: DataTypes.TEXT,
     allowNull: true
   },
-  username: {
-    type: DataTypes.STRING(255),
-    allowNull: false
-  },
-  registration_date: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW
+  role_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'roles',
+      key: 'role_id'
+    }
   },
   state: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: true
+  },
+  registration_date: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW
+  },
+  username: {
+    type: DataTypes.STRING(255),
+    allowNull: false
   }
 }, {
   sequelize,
-  modelName: 'Client',
-  tableName: 'clients',
+  modelName: 'User',
+  tableName: 'users',
   timestamps: false
 });
 
-module.exports = Client;
+module.exports = User;
