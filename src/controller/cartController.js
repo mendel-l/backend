@@ -1,8 +1,8 @@
 'use strict';
 
 const { Op } = require('sequelize');
-
-const { Cart, CartDetails, ProductsNonPerishable, ProductsPerishable} = require('../model/assosiationsModels');
+const sequelize = require('../../database.js'); 
+const { Cart, CartDetail, ProductsNonPerishable, ProductsPerishable} = require('../model/assosiationsModels');
 
 function getFullImagePaths(images) {
   const baseUrl = `${process.env.BASE_URL || 'http://localhost:3001'}/`; // Cambia el puerto y URL si es necesario
@@ -28,6 +28,32 @@ class CartController {
   async addItemToCart(req, res) {
   try{
     console.log(req.body);
+    const { productId, quantity_ordered, id_client,type } = req.body;
+
+       const result = await sequelize.transaction(async (t) => {
+       const cart = await Cart.create({ client_id: id_client }, { transaction: t });
+
+      let productDetails;
+      if (type === 'perishable') {
+        productDetails = await CartDetail.create({
+          cart_id: cart.cart_id,
+          product_perishable_id: productId,
+          quantity_ordered
+        }, { transaction: t });
+      } else if (type === 'non-perishable') {
+        productDetails = await CartDetail.create({
+          cart_id: cart.id,
+          product_non_perishable_id: productId,
+          quantity_ordered
+        }, { transaction: t });
+      } else {
+        throw new Error('Invalid product type');
+      }
+
+      return { cart, productDetails };
+    });
+
+    res.status(201).json(result);
   } catch (error) {
       res.status(400).json({ error: error.message });
     }
