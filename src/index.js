@@ -22,6 +22,7 @@ const eComerceData = require('./routes/eComerceDataRoute.js');
 // Rutas secundarias
 const productsPerishableRoutes = require('./routes/productsPerishabRoutes.js');
 const productsNonPerishableRoutes = require('./routes/productsNonPerishablesRoutes.js');
+const cartRoutes = require('./routes/cartRoutes.js');
 const userRoute = require('./routes/usersRoutes.js');
 const associationRoute = require('./routes/asostiationTestRoute.js');
 
@@ -37,6 +38,7 @@ app.use('/api/', loginRoute);
 app.use('/api/', productsPerishableRoutes);
 app.use('/api/', productsNonPerishableRoutes);
 app.use('/api/', userRoute);
+app.use('/api/', cartRoutes);
 app.use('/api/', associationRoute);
 
 //Rutas publicas

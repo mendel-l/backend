@@ -12,7 +12,7 @@ class eComerceData {
   async FindAllProducts(req, res) {
     try {
       const productPerishables = await ProductsPerishable.findAll({
-        attributes: ['name', 'description', 'discount', 'brand', 'images', 'price', 'keywords', 'meta_description'],
+        attributes: ['product_perishable_id', 'name', 'description', 'discount', 'brand', 'images', 'price', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -46,6 +46,7 @@ class eComerceData {
 
       const mergedPerishables = Object.values(groupedPerishables).map(product => {
         return {
+          id: product.product_non_perishable_id || product.product_perishable_id,
           name: product.name,
           description: product.description,
           discount: product.discount,
@@ -60,7 +61,7 @@ class eComerceData {
       });
 
       const productNonPerishable = await ProductsNonPerishable.findAll({
-        attributes: ['name', 'description', 'price', 'discount', 'stock', 'brand', 'images', 'keywords', 'meta_description'],
+        attributes: ['product_non_perishable_id', 'name', 'description', 'price', 'discount', 'stock', 'brand', 'images', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -72,20 +73,16 @@ class eComerceData {
         }
       });
 
-      const allProducts = [...mergedPerishables, ...productNonPerishable.map(product => {
-        return {
-          name: product.name,
-          description: product.description,
-          price: product.price,
-          discount: product.discount,
-          stock: product.stock,
-          brand: product.brand,
+      const allProducts = [
+        ...productPerishables.map(product => ({
+          ...product.toJSON(),
           images: getFullImagePaths(product.images),
-          keywords: product.keywords,
-          meta_description: product.meta_description,
-          category: product.Category.name
-        };
-      })];
+        })),
+        ...productNonPerishable.map(product => ({
+          ...product.toJSON(),
+          images: getFullImagePaths(product.images),
+        })),
+      ];
 
       res.status(200).json(allProducts);
     } catch (error) {
@@ -96,7 +93,7 @@ class eComerceData {
   async productItCanInterest(req, res) {
     try {
       const productPerishables = await ProductsPerishable.findAll({
-        attributes: ['name', 'description', 'brand', 'images', 'price', 'keywords', 'meta_description'],
+        attributes: ['product_perishable_id', 'name', 'description', 'brand', 'images', 'price', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -114,7 +111,7 @@ class eComerceData {
       });
   
       const productNonPerishable = await ProductsNonPerishable.findAll({
-        attributes: ['name', 'description', 'price', 'stock', 'brand', 'images', 'keywords', 'meta_description'],
+        attributes: ['product_non_perishable_id', 'name', 'description', 'price', 'stock', 'brand', 'images', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -159,7 +156,7 @@ class eComerceData {
   async productsWithDiscount(req, res) {
     try {
       const productPerishables = await ProductsPerishable.findAll({
-        attributes: ['name', 'description', 'brand', 'images', 'price', 'discount', 'keywords', 'meta_description'],
+        attributes: ['product_perishable_id', 'name', 'description', 'brand', 'images', 'price', 'discount', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -179,7 +176,7 @@ class eComerceData {
       });
   
       const productNonPerishable = await ProductsNonPerishable.findAll({
-        attributes: ['name', 'description', 'price', 'stock', 'brand', 'images', 'discount', 'keywords', 'meta_description'],
+        attributes: ['product_non_perishable_id', 'name', 'description', 'price', 'stock', 'brand', 'images', 'discount', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -228,7 +225,7 @@ class eComerceData {
     const { typeProduct } = req.params;
     try {
       const productPerishables = await ProductsPerishable.findAll({
-        attributes: ['name', 'description', 'discount', 'brand', 'images', 'price', 'keywords', 'meta_description'],
+        attributes: ['product_perishable_id', 'name', 'description', 'discount', 'brand', 'images', 'price', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -247,7 +244,7 @@ class eComerceData {
 
       // Buscar productos no perecederos
       const productNonPerishable = await ProductsNonPerishable.findAll({
-        attributes: ['name', 'description', 'price', 'discount', 'stock', 'brand', 'images', 'keywords', 'meta_description'],
+        attributes: ['product_non_perishable_id', 'name', 'description', 'price', 'discount', 'stock', 'brand', 'images', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
