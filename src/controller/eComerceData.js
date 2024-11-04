@@ -1,5 +1,5 @@
 const { and } = require('sequelize');
-const { ProductsPerishable, ProductsNonPerishable, Category, Batch, Supplier } = require('../model/assosiationsModels');
+const { ProductsPerishable, ProductsNonPerishable, Category, Batch, Client } = require('../model/assosiationsModels');
 const { Op } = require('sequelize');
 
 function getFullImagePaths(images) {
@@ -312,6 +312,25 @@ class eComerceData {
     } catch (error) {
       console.error('Search error:', error); // Loguea el error
       res.status(500).json({ error: 'An error occurred while searching for products' });
+    }
+  }
+
+  async createClient(req, res) {  
+    try {
+      const { name, email } = req.body;
+      
+      let client = await Client.findOne({ where: { email } });
+      if (!client) {
+        client = await Client.create({
+          username: name,
+          email,
+          registration_date: new Date(),
+        });
+      }
+
+      res.status(200).json({ message: 'logged in' });
+    } catch (error) {
+      res.status(200).json({ message: 'logged' + error});
     }
   }
 }

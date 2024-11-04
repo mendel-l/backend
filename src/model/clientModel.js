@@ -17,30 +17,10 @@ Client.init({
     autoIncrement: true,
     primaryKey: true
   },
-  first_name: {
-    type: DataTypes.STRING(100),
-    allowNull: false
-  },
-  last_name: {
-    type: DataTypes.STRING(100),
-    allowNull: false
-  },
   email: {
     type: DataTypes.STRING(255),
     allowNull: false,
     unique: true
-  },
-  password: {
-    type: DataTypes.STRING(255),
-    allowNull: false
-  },
-  phone: {
-    type: DataTypes.STRING(20),
-    allowNull: true
-  },
-  address: {
-    type: DataTypes.TEXT,
-    allowNull: true
   },
   username: {
     type: DataTypes.STRING(255),
@@ -51,11 +31,6 @@ Client.init({
     allowNull: false,
     defaultValue: DataTypes.NOW
   },
-  state: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: true
-  }
 }, {
   sequelize,
   modelName: 'Client',
