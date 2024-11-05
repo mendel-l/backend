@@ -149,7 +149,6 @@ class eComerceData {
       res.status(200).json(limitedProducts);
     } catch (error) {
       res.status(400).json({ error: error.message });
-      console.log(error);
     }
   }
 
@@ -216,7 +215,6 @@ class eComerceData {
       res.status(200).json(limitedProducts);
     } catch (error) {
       res.status(400).json({ error: error.message });
-      console.log(error);
     }
   }
   
@@ -393,8 +391,6 @@ class eComerceData {
         });
       });
   
-      // Estructurar la respuesta con el campo 'amount' al inicio
-      console.log(cart);
       res.status(200).json({
         amount: totalAmount,
         cart: cart,
