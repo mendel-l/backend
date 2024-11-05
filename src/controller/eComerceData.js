@@ -337,7 +337,7 @@ class eComerceData {
   async getCartDetails(req, res) {
     try {
       // Obtener el email del usuario. En un entorno real, esto debería obtenerse de la sesión o token de autenticación.
-      const email = "franciscperez@umes.edu.gt";
+      const email = req.params.email;
       
       // Buscar al cliente por email
       const client = await Client.findOne({ where: { email } });
@@ -394,11 +394,13 @@ class eComerceData {
       });
   
       // Estructurar la respuesta con el campo 'amount' al inicio
+      console.log(cart);
       res.status(200).json({
         amount: totalAmount,
         cart: cart,
       });
     } catch (error) {
+      console.error('Error getting cart details:', error);
       res.status(400).json({ error: error.message });
     }
   }
