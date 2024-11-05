@@ -1,5 +1,5 @@
 const { and } = require('sequelize');
-const { ProductsPerishable, ProductsNonPerishable, Category, Batch, Client } = require('../model/assosiationsModels');
+const { ProductsPerishable, ProductsNonPerishable, Category, Batch, Client, Cart, CartDetail } = require('../model/assosiationsModels');
 const { Op } = require('sequelize');
 
 function getFullImagePaths(images) {
@@ -333,6 +333,76 @@ class eComerceData {
       res.status(200).json({ message: 'logged' + error});
     }
   }
+
+  async getCartDetails(req, res) {
+    try {
+      // Obtener el email del usuario. En un entorno real, esto debería obtenerse de la sesión o token de autenticación.
+      const email = "franciscperez@umes.edu.gt";
+      
+      // Buscar al cliente por email
+      const client = await Client.findOne({ where: { email } });
+      if (!client) {
+        return res.status(404).json({ error: 'Client not found' });
+      }
+  
+      // Obtener el carrito del cliente, incluyendo los detalles del carrito y los productos asociados
+      const cart = await Cart.findAll({
+        where: { client_id: client.client_id },
+        include: [
+          {
+            model: CartDetail,
+            include: [
+              {
+                model: ProductsPerishable,
+                attributes: ['name', 'description', 'price', 'discount', 'images'],
+              },
+              {
+                model: ProductsNonPerishable,
+                attributes: ['name', 'description', 'price', 'discount', 'images'],
+              },
+            ],
+          },
+        ],
+      });
+  
+      if (!cart || cart.length === 0) {
+        return res.status(404).json({ error: 'Cart not found' });
+      }
+  
+      // Calcular el monto total (amount)
+      let totalAmount = 0;
+  
+      // Iterar sobre cada carrito (en caso de múltiples)
+      cart.forEach((cartItem) => {
+        // Iterar sobre cada detalle del carrito
+        cartItem.CartDetails.forEach((detail) => {
+          let price = 0;
+  
+          // Determinar el precio según el tipo de producto
+          if (detail.ProductsPerishable) {
+            price = detail.ProductsPerishable.price;
+          } else if (detail.ProductsNonPerishable) {
+            price = detail.ProductsNonPerishable.price;
+          }
+  
+          // Calcular subtotal para este detalle
+          const subtotal = detail.quantity * price;
+  
+          // Sumar al totalAmount
+          totalAmount += subtotal;
+        });
+      });
+  
+      // Estructurar la respuesta con el campo 'amount' al inicio
+      res.status(200).json({
+        amount: totalAmount,
+        cart: cart,
+      });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+  
 }
 
 module.exports = new eComerceData();

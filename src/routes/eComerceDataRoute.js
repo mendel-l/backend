@@ -9,6 +9,7 @@ router.get('/data/productsInterest', eComerceData.productItCanInterest);
 router.get('/data/productsDiscount', eComerceData.productsWithDiscount);
 router.get('/data/productsType/:typeProduct', eComerceData.findProductsType);
 router.post('/sesion/client',eComerceData.createClient);
+router.get('/data/allCartDetails/:email',eComerceData.getCartDetails);
 // Updated search route
 router.get('/data/search', eComerceData.searchProducts);
 

@@ -2,7 +2,7 @@
 
 const { Op } = require('sequelize');
 const sequelize = require('../../database.js'); 
-const { Cart, CartDetail, ProductsNonPerishable, ProductsPerishable} = require('../model/assosiationsModels');
+const { Cart, CartDetail, ProductsNonPerishable, ProductsPerishable, Client} = require('../model/assosiationsModels');
 
 function getFullImagePaths(images) {
   const baseUrl = `${process.env.BASE_URL || 'http://localhost:3001'}/`; // Cambia el puerto y URL si es necesario
@@ -26,78 +26,45 @@ class CartController {
   }
 
   async addItemToCart(req, res) {
-  try{
-    console.log(req.body);
-    const { productId, quantity_ordered, id_client,type } = req.body;
-
-       const result = await sequelize.transaction(async (t) => {
-       const cart = await Cart.create({ client_id: id_client }, { transaction: t });
-
-      let productDetails;
-      if (type === 'perishable') {
-        productDetails = await CartDetail.create({
-          cart_id: cart.cart_id,
-          product_perishable_id: productId,
-          quantity_ordered
-        }, { transaction: t });
-      } else if (type === 'non-perishable') {
-        productDetails = await CartDetail.create({
-          cart_id: cart.id,
-          product_non_perishable_id: productId,
-          quantity_ordered
-        }, { transaction: t });
-      } else {
-        throw new Error('Invalid product type');
-      }
-
-      return { cart, productDetails };
-    });
-
-    res.status(201).json(result);
-  } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  }
-
-  async getCartDetails(req, res) {
     try {
-      const { cart_id } = req.params;
+      const { productId, quantity_ordered, email, type } = req.body;
 
-      if (!cart_id) {
-        return res.status(400).json({ error: 'cart_id is required' });
+      // Find client by email
+      const client = await Client.findOne({ where: { email } });
+      if (!client) {
+        return res.status(404).json({ error: 'Client not found' });
       }
 
-      const cartDetailsWithFullImagePaths = await Promise.all(cartDetails.map(async (detail) => {
-        if (detail.productNonPerishable) {
-          detail.productNonPerishable.images = getFullImagePaths(detail.productNonPerishable.images);
-        }
-        if (detail.productPerishable) {
-          detail.productPerishable.images = getFullImagePaths(detail.productPerishable.images);
-        }
-        return detail;
-      }));
+      const result = await sequelize.transaction(async (t) => {
+        const cart = await Cart.create({ client_id: client.client_id }, { transaction: t });
 
-      const cartDetails = await CartDetails.findAll({
-        where: { cart_id, state: true },
-        include: [
-          { 
-            model: ProductsNonPerishable, 
-            as: 'productNonPerishable',
-            attributes: ['product_non_perishable_id', 'name', 'price', 'images']
-          },
-          { 
-            model: ProductsPerishable, 
-            as: 'productPerishable',
-            attributes: ['product_perishable_id', 'name', 'price', 'images']
-          }
-        ]        
-      });      
+        let productDetails;
+        if (type === 'perishable') {
+          productDetails = await CartDetail.create({
+            cart_id: cart.cart_id,
+            product_perishable_id: productId,
+            quantity:quantity_ordered
+          }, { transaction: t });
+        } else if (type === 'non-perishable') {
+          productDetails = await CartDetail.create({
+            cart_id: cart.cart_id,
+            product_non_perishable_id: productId,
+            quantity:quantity_ordered
+          }, { transaction: t });
+        } else {
+          throw new Error('Invalid product type');
+        }
 
-      res.status(200).json(cartDetails);
+        return { cart, productDetails };
+      });
+
+      res.status(201).json(result);
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
   }
+
+
 
   async updateCartState(req, res) {
     try {
