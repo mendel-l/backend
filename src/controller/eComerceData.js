@@ -1,5 +1,5 @@
 const { and } = require('sequelize');
-const { ProductsPerishable, ProductsNonPerishable, Category, Batch, Supplier } = require('../model/assosiationsModels');
+const { ProductsPerishable, ProductsNonPerishable, Category, Batch, Client, Cart, CartDetail } = require('../model/assosiationsModels');
 const { Op } = require('sequelize');
 
 function getFullImagePaths(images) {
@@ -12,7 +12,7 @@ class eComerceData {
   async FindAllProducts(req, res) {
     try {
       const productPerishables = await ProductsPerishable.findAll({
-        attributes: ['name', 'description', 'discount', 'brand', 'images', 'price', 'keywords', 'meta_description'],
+        attributes: ['product_perishable_id', 'name', 'description', 'discount', 'brand', 'images', 'price', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -46,6 +46,7 @@ class eComerceData {
 
       const mergedPerishables = Object.values(groupedPerishables).map(product => {
         return {
+          id: product.product_non_perishable_id || product.product_perishable_id,
           name: product.name,
           description: product.description,
           discount: product.discount,
@@ -60,7 +61,7 @@ class eComerceData {
       });
 
       const productNonPerishable = await ProductsNonPerishable.findAll({
-        attributes: ['name', 'description', 'price', 'discount', 'stock', 'brand', 'images', 'keywords', 'meta_description'],
+        attributes: ['product_non_perishable_id', 'name', 'description', 'price', 'discount', 'stock', 'brand', 'images', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -72,20 +73,16 @@ class eComerceData {
         }
       });
 
-      const allProducts = [...mergedPerishables, ...productNonPerishable.map(product => {
-        return {
-          name: product.name,
-          description: product.description,
-          price: product.price,
-          discount: product.discount,
-          stock: product.stock,
-          brand: product.brand,
+      const allProducts = [
+        ...productPerishables.map(product => ({
+          ...product.toJSON(),
           images: getFullImagePaths(product.images),
-          keywords: product.keywords,
-          meta_description: product.meta_description,
-          category: product.Category.name
-        };
-      })];
+        })),
+        ...productNonPerishable.map(product => ({
+          ...product.toJSON(),
+          images: getFullImagePaths(product.images),
+        })),
+      ];
 
       res.status(200).json(allProducts);
     } catch (error) {
@@ -96,7 +93,7 @@ class eComerceData {
   async productItCanInterest(req, res) {
     try {
       const productPerishables = await ProductsPerishable.findAll({
-        attributes: ['name', 'description', 'brand', 'images', 'price', 'keywords', 'meta_description'],
+        attributes: ['product_perishable_id', 'name', 'description', 'brand', 'images', 'price', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -114,7 +111,7 @@ class eComerceData {
       });
   
       const productNonPerishable = await ProductsNonPerishable.findAll({
-        attributes: ['name', 'description', 'price', 'stock', 'brand', 'images', 'keywords', 'meta_description'],
+        attributes: ['product_non_perishable_id', 'name', 'description', 'price', 'stock', 'brand', 'images', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -152,14 +149,13 @@ class eComerceData {
       res.status(200).json(limitedProducts);
     } catch (error) {
       res.status(400).json({ error: error.message });
-      console.log(error);
     }
   }
 
   async productsWithDiscount(req, res) {
     try {
       const productPerishables = await ProductsPerishable.findAll({
-        attributes: ['name', 'description', 'brand', 'images', 'price', 'discount', 'keywords', 'meta_description'],
+        attributes: ['product_perishable_id', 'name', 'description', 'brand', 'images', 'price', 'discount', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -179,7 +175,7 @@ class eComerceData {
       });
   
       const productNonPerishable = await ProductsNonPerishable.findAll({
-        attributes: ['name', 'description', 'price', 'stock', 'brand', 'images', 'discount', 'keywords', 'meta_description'],
+        attributes: ['product_non_perishable_id', 'name', 'description', 'price', 'stock', 'brand', 'images', 'discount', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -219,7 +215,6 @@ class eComerceData {
       res.status(200).json(limitedProducts);
     } catch (error) {
       res.status(400).json({ error: error.message });
-      console.log(error);
     }
   }
   
@@ -228,7 +223,7 @@ class eComerceData {
     const { typeProduct } = req.params;
     try {
       const productPerishables = await ProductsPerishable.findAll({
-        attributes: ['name', 'description', 'discount', 'brand', 'images', 'price', 'keywords', 'meta_description'],
+        attributes: ['product_perishable_id', 'name', 'description', 'discount', 'brand', 'images', 'price', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -247,7 +242,7 @@ class eComerceData {
 
       // Buscar productos no perecederos
       const productNonPerishable = await ProductsNonPerishable.findAll({
-        attributes: ['name', 'description', 'price', 'discount', 'stock', 'brand', 'images', 'keywords', 'meta_description'],
+        attributes: ['product_non_perishable_id', 'name', 'description', 'price', 'discount', 'stock', 'brand', 'images', 'keywords', 'meta_description'],
         include: [
           {
             model: Category,
@@ -317,6 +312,95 @@ class eComerceData {
       res.status(500).json({ error: 'An error occurred while searching for products' });
     }
   }
+
+  async createClient(req, res) {  
+    try {
+      const { name, email } = req.body;
+      
+      let client = await Client.findOne({ where: { email } });
+      if (!client) {
+        client = await Client.create({
+          username: name,
+          email,
+          registration_date: new Date(),
+        });
+      }
+
+      res.status(200).json({ message: 'logged in' });
+    } catch (error) {
+      res.status(200).json({ message: 'logged' + error});
+    }
+  }
+
+  async getCartDetails(req, res) {
+    try {
+      // Obtener el email del usuario. En un entorno real, esto debería obtenerse de la sesión o token de autenticación.
+      const email = req.params.email;
+      
+      // Buscar al cliente por email
+      const client = await Client.findOne({ where: { email } });
+      if (!client) {
+        return res.status(404).json({ error: 'Client not found' });
+      }
+  
+      // Obtener el carrito del cliente, incluyendo los detalles del carrito y los productos asociados
+      const cart = await Cart.findAll({
+        where: { client_id: client.client_id },
+        include: [
+          {
+            model: CartDetail,
+            include: [
+              {
+                model: ProductsPerishable,
+                attributes: ['name', 'description', 'price', 'discount', 'images'],
+              },
+              {
+                model: ProductsNonPerishable,
+                attributes: ['name', 'description', 'price', 'discount', 'images'],
+              },
+            ],
+          },
+        ],
+      });
+  
+      if (!cart || cart.length === 0) {
+        return res.status(404).json({ error: 'Cart not found' });
+      }
+  
+      // Calcular el monto total (amount)
+      let totalAmount = 0;
+  
+      // Iterar sobre cada carrito (en caso de múltiples)
+      cart.forEach((cartItem) => {
+        // Iterar sobre cada detalle del carrito
+        cartItem.CartDetails.forEach((detail) => {
+          let price = 0;
+  
+          // Determinar el precio según el tipo de producto
+          if (detail.ProductsPerishable) {
+            price = detail.ProductsPerishable.price;
+          } else if (detail.ProductsNonPerishable) {
+            price = detail.ProductsNonPerishable.price;
+          }
+  
+          // Calcular subtotal para este detalle
+          const subtotal = detail.quantity * price;
+  
+          // Sumar al totalAmount
+          totalAmount += subtotal;
+        });
+      });
+  
+      res.status(200).json({
+        amount: totalAmount,
+        cart: cart,
+      });
+    } catch (error) {
+      console.error('Error getting cart details:', error);
+      res.status(400).json({ error: error.message });
+    }
+  }
+  
 }
 
 module.exports = new eComerceData();

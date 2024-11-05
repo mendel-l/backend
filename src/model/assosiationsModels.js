@@ -3,12 +3,12 @@
 // Import models
 const Batch = require('./batchesModel');
 const Client = require('./clientModel');
-//const Cart = require('./cartModel');
+const Cart = require('./cartModel');
 const Category = require('./categoriesModel');
 const Supplier = require('./suppliersModel');
 const ProductsNonPerishable = require('./productsNonPerishablesModel');
 const ProductsPerishable = require('./productsPerishablesModel');
-//const CartDetail = require('./cartDetailsModel');
+const CartDetail = require('./cartDetailsModel');
 //const Course = require('./coursesModel');
 //const Order = require('./ordersModel');
 //const OrderDetail = require('./orderDetailsModel');
@@ -18,11 +18,11 @@ const StockNotification = require('./stockNotificationModel');
 const User = require('./usersModel');
 
 // Associations
-/*
+
 // Client and Cart
 Client.hasMany(Cart, { foreignKey: 'client_id' });
 Cart.belongsTo(Client, { foreignKey: 'client_id' });
-*/
+
 // Category and Products
 Category.hasMany(ProductsNonPerishable, { foreignKey: 'category_id' });
 Category.hasMany(ProductsPerishable, { foreignKey: 'category_id' });
@@ -38,18 +38,17 @@ ProductsPerishable.belongsTo(Supplier, { foreignKey: 'supplier_id' });
 // Batch and ProductsPerishable
 Batch.hasMany(ProductsPerishable, { foreignKey: 'batch_id' });
 ProductsPerishable.belongsTo(Batch, { foreignKey: 'batch_id' });
-/*
+
 // Cart and CartDetails
 Cart.hasMany(CartDetail, { foreignKey: 'cart_id' });
 CartDetail.belongsTo(Cart, { foreignKey: 'cart_id' });
-*/
+
 // Products and CartDetails
-/*
 ProductsNonPerishable.hasMany(CartDetail, { foreignKey: 'product_non_perishable_id' });
 ProductsPerishable.hasMany(CartDetail, { foreignKey: 'product_perishable_id' });
 CartDetail.belongsTo(ProductsNonPerishable, { foreignKey: 'product_non_perishable_id' });
 CartDetail.belongsTo(ProductsPerishable, { foreignKey: 'product_perishable_id' });
-*/
+
 // Client and Orders
 /*
 Client.hasMany(Order, { foreignKey: 'client_id' });
@@ -89,12 +88,12 @@ StockNotification.belongsTo(ProductsNonPerishable, { foreignKey: 'product_non_pe
 module.exports = {
   Batch,
   Client,
-  //Cart,
+  Cart,
   Category,
   Supplier,
   ProductsNonPerishable,
   ProductsPerishable,
-  //CartDetail,
+  CartDetail,
   //Course,
   //Order,
   //OrderDetail,
